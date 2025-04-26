@@ -1,0 +1,58 @@
+import streamlit as st
+import random
+import time
+import openai
+
+st.write("Streamlit loves LLMs! 🤖 [Build your own chat app](https://docs.streamlit.io/develop/tutorials/llms/build-conversational-apps) in minutes, then make it powerful by adding images, dataframes, or even input widgets to the chat.")
+
+st.caption("Note that this demo app isn't actually connected to any LLMs. Those are expensive ;)")
+
+api_key = st.secrets["API_KEY"]
+base_url = st.secrets["BASE_URL"]
+model_name = st.secrets["MODEL"] 
+
+client = openai.OpenAI(api_key=api_key, base_url=base_url)
+
+# Initialize chat history
+if "messages" not in st.session_state:
+    st.session_state.messages = [{"role": "assistant", "content": "Let's start chatting! 👇"}]
+
+# Display chat messages from history on app rerun
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+# Accept user input
+if prompt := st.chat_input("What is up?"):
+    # Add user message to chat history
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    # Display user message in chat message container
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    # Display assistant response in chat message container
+    with st.chat_message("assistant"):
+        message_placeholder = st.empty()
+        full_response = ""
+        try:
+            response = client.chat.completions.create(
+                model=model_name,
+                messages=[
+                    {"role": m["role"], "content": m["content"]}
+                    for m in st.session_state.messages
+                ],
+                stream=True,  # Streaming response
+            )
+
+            for chunk in response:
+                if chunk.choices[0].delta.get("content"):
+                    full_response += chunk.choices[0].delta.content
+                    message_placeholder.markdown(full_response + "▌")
+                    time.sleep(0.05)
+            message_placeholder.markdown(full_response)
+
+        except Exception as e:
+            full_response = f"Error: {e}"
+            st.error(full_response)
+    # Add assistant response to chat history
+    st.session_state.messages.append({"role": "assistant", "content": full_response})
