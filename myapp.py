@@ -3,9 +3,9 @@ import random
 import time
 import openai
 
-st.write("Streamlit loves LLMs! 🤖 [Build your own chat app](https://docs.streamlit.io/develop/tutorials/llms/build-conversational-apps) in minutes, then make it powerful by adding images, dataframes, or even input widgets to the chat.")
+st.write("Test chat.")
 
-st.caption("Note that this demo app isn't actually connected to any LLMs. Those are expensive ;)")
+# st.caption("Note that this demo app isn't actually connected to any LLMs. Those are expensive ;)")
 
 api_key = st.secrets["API_KEY"]
 base_url = st.secrets["BASE_URL"]
@@ -43,7 +43,6 @@ if prompt := st.chat_input("What is up?"):
                 ],
                 stream=True,  # Streaming response
             )
-
             
             message_placeholder.markdown(full_response)
 
