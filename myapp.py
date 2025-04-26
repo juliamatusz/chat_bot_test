@@ -42,7 +42,7 @@ if prompt := st.chat_input("What is up?"):
                 stream=True,  # Streaming response
             )
             for chunk in response:
-                if chunk.choices[0].delta.get("content"):
+                if chunk.choices[0].delta.content:
                     full_response += chunk.choices[0].delta.content
                     message_placeholder.markdown(full_response + "▌")
             message_placeholder.markdown(full_response)
