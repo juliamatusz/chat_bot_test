@@ -5,8 +5,6 @@ import openai
 
 st.write("Test chat.")
 
-# st.caption("Note that this demo app isn't actually connected to any LLMs. Those are expensive ;)")
-
 api_key = st.secrets["API_KEY"]
 base_url = st.secrets["BASE_URL"]
 model_name = st.secrets["MODEL"] 
@@ -43,7 +41,10 @@ if prompt := st.chat_input("What is up?"):
                 ],
                 stream=True,  # Streaming response
             )
-            
+            for chunk in response:
+                if chunk.choices[0].delta.get("content"):
+                    full_response += chunk.choices[0].delta.content
+                    message_placeholder.markdown(full_response + "▌")
             message_placeholder.markdown(full_response)
 
         except Exception as e:
