@@ -3,6 +3,7 @@ import random
 import time
 import openai
 import fitz
+from chat_openrouter import ChatOpenRouter
 
 st.write("Test chat.")
 
@@ -75,3 +76,16 @@ if prompt := st.chat_input("What is up?"):
             st.error(full_response)
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": full_response})
+
+template = """
+Write short answers, up to 4 sentences. When you don't know just write: I don't know.
+Question: {question}
+Context: {context}
+Answer:
+"""
+
+def answear_question(question, documents, model):
+    context = "\n\n".join([doc["text"] for doc in documents])
+    propmt = ChatPromptTemplate.from_template(template)
+    chain = prompt | model
+    return chain.invoke({"question": question, "context": context})
