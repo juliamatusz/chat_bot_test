@@ -1,4 +1,4 @@
-import faiss
+import faiss_cpu as faiss
 import numpy as np
 from langchain_huggingface import HuggingFaceEmbeddings
 
