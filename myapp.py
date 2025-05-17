@@ -1,23 +1,15 @@
 import streamlit as st
-import random
-import time
-import openai
 import fitz
-from chat_openrouter import ChatOpenRouter
+import os
+import tempfile
+
 from docloader import load_documents_from_folder
 from embedder import create_index, retrieve_docs
 from chat_openrouter import ChatOpenRouter
 from langchain.prompts import ChatPromptTemplate
-import tempfile
-import os
 
-st.write("Test chat.")
+st.title("Test Chat with PDF Context")
 
-api_key = st.secrets["API_KEY"]
-base_url = st.secrets["BASE_URL"]
-model_name = st.secrets["MODEL"] 
-
-client = openai.OpenAI(api_key=api_key, base_url=base_url)
 
 with st.sidebar:
     st.title("Upload PDFs")
@@ -50,40 +42,33 @@ Context: {context}
 Answer:
 """
 
-def answear_question(question, documents, model):
-    context = "\n\n".join([doc["text"] for doc in documents])
-    propmt = ChatPromptTemplate.from_template(template)
+def answer_with_context(question, index, model):
+    top_docs = retrieve_docs(question, index)
+    context = "\n\n".join([doc["text"] for doc in top_docs])
+    prompt = ChatPromptTemplate.from_template(template)
     chain = prompt | model
     return chain.invoke({"question": question, "context": context})
 
-if prompt := st.chat_input("What is up?"):
-    # Add user message to chat history
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    # Display user message in chat message container
+if user_input := st.chat_input("What is up?"):
+    st.session_state.messages.append({"role": "user", "content": user_input})
     with st.chat_message("user"):
-        st.markdown(prompt)
+        st.markdown(user_input)
 
-    # Display assistant response in chat message container
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
-        full_response = ""
         try:
-            response = client.chat.completions.create(
-                model=model_name,
-                messages=[
-                    {"role": m["role"], "content": m["content"]}
-                    for m in st.session_state.messages
-                ],
-                stream=True,  # Streaming response
-            )
-            for chunk in response:
-                if chunk.choices[0].delta.content:
-                    full_response += chunk.choices[0].delta.content
-                    message_placeholder.markdown(full_response + "▌")
-            message_placeholder.markdown(full_response)
+            if "index" in st.session_state:
+                response = answer_with_context(
+                    user_input,
+                    st.session_state.index,
+                    ChatOpenRouter(model=st.secrets["MODEL"])
+                )
+            else:
+                response = "Please upload PDF files to provide context."
 
+            message_placeholder.markdown(response)
         except Exception as e:
-            full_response = f"Error: {e}"
-            st.error(full_response)
-    # Add assistant response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": full_response})
+            response = f"Error: {e}"
+            st.error(response)
+
+    st.session_state.messages.append({"role": "assistant", "content": response})
