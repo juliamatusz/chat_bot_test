@@ -6,5 +6,4 @@ PyMuPDF
 langchain-huggingface
 numpy
 langchain-openai
-faiss
 faiss-cpu
