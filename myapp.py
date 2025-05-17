@@ -2,6 +2,7 @@ import streamlit as st
 import random
 import time
 import openai
+from langchain.document_loaders import PyMuPDFLoader
 
 st.write("Test chat.")
 
@@ -10,6 +11,14 @@ base_url = st.secrets["BASE_URL"]
 model_name = st.secrets["MODEL"] 
 
 client = openai.OpenAI(api_key=api_key, base_url=base_url)
+
+with st.sidebar:
+    st.title("Upload PDFs")
+    uploaded_files = st.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
+
+    if uploaded_files:
+        st.session_state.uploaded_pdfs = uploaded_files
+        st.success(f"{len(uploaded_files)} file(s) uploaded.")
 
 # Initialize chat history
 if "messages" not in st.session_state:
