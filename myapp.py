@@ -4,6 +4,12 @@ import time
 import openai
 import fitz
 from chat_openrouter import ChatOpenRouter
+from docloader import load_documents_from_folder
+from embedder import create_index, retrieve_docs
+from chat_openrouter import ChatOpenRouter
+from langchain.prompts import ChatPromptTemplate
+import tempfile
+import os
 
 st.write("Test chat.")
 
@@ -18,22 +24,15 @@ with st.sidebar:
     uploaded_files = st.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
 
     if uploaded_files:
-        st.session_state.uploaded_texts = []
-
-        for uploaded_file in uploaded_files:
-            text = ""
-            try:
-                with fitz.open(stream=uploaded_file.read(), filetype="pdf") as doc:
-                    for page in doc:
-                        text += page.get_text()
-                st.session_state.uploaded_texts.append({
-                    "filename": uploaded_file.name,
-                    "content": text
-                })
-                st.success(f"{uploaded_file.name} loaded ({len(doc)} pages)")
-
-            except Exception as e:
-                st.error(f"Failed to read {uploaded_file.name}: {e}")
+        with tempfile.TemporaryDirectory() as tmpdir:
+            for uploaded_file in uploaded_files:
+                file_path = os.path.join(tmpdir, uploaded_file.name)
+                with open(file_path, "wb") as f:
+                    f.write(uploaded_file.read())
+            documents = load_documents_from_folder(tmpdir)
+            st.session_state.documents = documents
+            st.session_state.index = create_index(documents)
+            st.success(f"Loaded and indexed {len(documents)} documents.")
 
 # Initialize chat history
 if "messages" not in st.session_state:
@@ -44,7 +43,19 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Accept user input
+template = """
+Write short answers, up to 4 sentences. When you don't know just write: I don't know.
+Question: {question}
+Context: {context}
+Answer:
+"""
+
+def answear_question(question, documents, model):
+    context = "\n\n".join([doc["text"] for doc in documents])
+    propmt = ChatPromptTemplate.from_template(template)
+    chain = prompt | model
+    return chain.invoke({"question": question, "context": context})
+
 if prompt := st.chat_input("What is up?"):
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -76,16 +87,3 @@ if prompt := st.chat_input("What is up?"):
             st.error(full_response)
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": full_response})
-
-template = """
-Write short answers, up to 4 sentences. When you don't know just write: I don't know.
-Question: {question}
-Context: {context}
-Answer:
-"""
-
-def answear_question(question, documents, model):
-    context = "\n\n".join([doc["text"] for doc in documents])
-    propmt = ChatPromptTemplate.from_template(template)
-    chain = prompt | model
-    return chain.invoke({"question": question, "context": context})
