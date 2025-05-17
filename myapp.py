@@ -2,7 +2,7 @@ import streamlit as st
 import random
 import time
 import openai
-from langchain.document_loaders import PyMuPDFLoader
+import fitz
 
 st.write("Test chat.")
 
@@ -17,8 +17,22 @@ with st.sidebar:
     uploaded_files = st.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
 
     if uploaded_files:
-        st.session_state.uploaded_pdfs = uploaded_files
-        st.success(f"{len(uploaded_files)} file(s) uploaded.")
+        st.session_state.uploaded_texts = []
+
+        for uploaded_file in uploaded_files:
+            text = ""
+            try:
+                with fitz.open(stream=uploaded_file.read(), filetype="pdf") as doc:
+                    for page in doc:
+                        text += page.get_text()
+                st.session_state.uploaded_texts.append({
+                    "filename": uploaded_file.name,
+                    "content": text
+                })
+                st.success(f"{uploaded_file.name} loaded ({len(doc)} pages)")
+
+            except Exception as e:
+                st.error(f"Failed to read {uploaded_file.name}: {e}")
 
 # Initialize chat history
 if "messages" not in st.session_state:
