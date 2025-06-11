@@ -9,3 +9,4 @@ langchain-openai
 faiss-cpu
 sentence-transformers
 fitz
+frontend
