@@ -7,3 +7,5 @@ langchain-huggingface
 numpy
 langchain-openai
 faiss-cpu
+sentence-transformers
+fitz
