@@ -15,7 +15,7 @@ class FAISSIndex:
         return results
 
 embed_model_id = 'intfloat/e5-small-v2'
-model_kwargs = {"device": "cpu", "trust_remote_code": True}
+model_kwargs = {"trust_remote_code": True}
 
 def create_index(documents):
     embeddings = HuggingFaceEmbeddings(model_name=embed_model_id, model_kwargs=model_kwargs)
