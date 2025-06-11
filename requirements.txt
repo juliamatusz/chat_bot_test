@@ -2,11 +2,9 @@ streamlit
 openai
 langchain
 langchain-community
-PyMuPDF
 langchain-huggingface
 numpy
 langchain-openai
 faiss-cpu
 sentence-transformers
-fitz
-frontend
+pymupdf
