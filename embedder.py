@@ -1,6 +1,7 @@
 import faiss
 import numpy as np
 from sentence_transformers import SentenceTransformer
+import torch
 
 class FAISSIndex:
     def __init__(self, faiss_index, metadata):
@@ -15,7 +16,8 @@ class FAISSIndex:
         return results
 
 # Load model once globally
-embed_model = SentenceTransformer("intfloat/e5-small-v2")
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+embed_model = SentenceTransformer("intfloat/e5-small-v2", device=device)
 
 def create_index(documents):
     texts = [doc["text"] for doc in documents]
