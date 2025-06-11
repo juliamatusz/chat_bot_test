@@ -1,5 +1,4 @@
 import streamlit as st
-import fitz
 import os
 import tempfile
 

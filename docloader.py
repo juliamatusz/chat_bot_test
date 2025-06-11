@@ -1,13 +1,11 @@
 import os
-import fitz
+import PyPDF2
 
 def load_pdf(file_path):
-    doc = fitz.open(file_path)
-    text = ""
-    for page in doc:
-        text += page.get_text()
-    doc.close()
-    return text
+    with open(file_path, "rb") as f:
+        reader = PyPDF2.PdfReader(f)
+        return "\n".join([page.extract_text() or "" for page in reader.pages])
+
 
 def load_documents_from_folder(folder_path):
     documents = []
