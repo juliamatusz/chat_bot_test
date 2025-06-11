@@ -1,6 +1,6 @@
 import faiss
 import numpy as np
-from langchain_huggingface import HuggingFaceEmbeddings
+from sentence_transformers import SentenceTransformer
 
 class FAISSIndex:
     def __init__(self, faiss_index, metadata):
@@ -14,17 +14,15 @@ class FAISSIndex:
             results.append(self.metadata[idx])
         return results
 
-embed_model_id = 'intfloat/e5-small-v2'
-model_kwargs = {"trust_remote_code": True}
+# Load model once globally
+embed_model = SentenceTransformer("intfloat/e5-small-v2")
 
 def create_index(documents):
-    embeddings = HuggingFaceEmbeddings(model_name=embed_model_id, model_kwargs=model_kwargs)
     texts = [doc["text"] for doc in documents]
     metadata = [{"filename": doc["filename"], "text": doc["text"]} for doc in documents]
 
     # Generate embeddings
-    embeddings_matrix = [embeddings.embed_query(text) for text in texts]
-    embeddings_matrix = np.array(embeddings_matrix).astype("float32")
+    embeddings_matrix = embed_model.encode(texts, convert_to_numpy=True, normalize_embeddings=True).astype("float32")
 
     # Create FAISS index
     index = faiss.IndexFlatL2(embeddings_matrix.shape[1])
@@ -34,7 +32,6 @@ def create_index(documents):
     return FAISSIndex(index, metadata)
 
 def retrieve_docs(query, faiss_index, k=3):
-    embeddings = HuggingFaceEmbeddings(model_name=embed_model_id, model_kwargs=model_kwargs)
-    query_embedding = np.array([embeddings.embed_query(query)]).astype("float32")
+    query_embedding = embed_model.encode([query], convert_to_numpy=True, normalize_embeddings=True).astype("float32")
     results = faiss_index.similarity_search(query_embedding, k=k)
     return results
