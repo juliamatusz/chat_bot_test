@@ -16,9 +16,10 @@ class FAISSIndex:
 
 embed_model_id = 'intfloat/e5-small-v2'
 model_kwargs = {"device": "cpu", "trust_remote_code": True}
+embeddings = HuggingFaceEmbeddings(model_name=embed_model_id, model_kwargs=model_kwargs)
 
 def create_index(documents):
-    embeddings = HuggingFaceEmbeddings(model_name=embed_model_id, model_kwargs=model_kwargs)
+    
     texts = [doc["text"] for doc in documents]
     metadata = [{"filename": doc["filename"], "text": doc["text"]} for doc in documents]
 
@@ -34,7 +35,7 @@ def create_index(documents):
     return FAISSIndex(index, metadata)
 
 def retrieve_docs(query, faiss_index, k=3):
-    embeddings = HuggingFaceEmbeddings(model_name=embed_model_id, model_kwargs=model_kwargs)
+    # embeddings = HuggingFaceEmbeddings(model_name=embed_model_id, model_kwargs=model_kwargs)
     query_embedding = np.array([embeddings.embed_query(query)]).astype("float32")
     results = faiss_index.similarity_search(query_embedding, k=k)
     return results
