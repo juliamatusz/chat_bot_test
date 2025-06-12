@@ -64,8 +64,6 @@ if user_input := st.chat_input("What is up?"):
                 )
             else:
                 response = "Please upload PDF files to provide context."
-
-            response = response_obj.content if hasattr(response_obj, "content") else str(response_obj)
             message_placeholder.markdown(response)
         except Exception as e:
             response = f"Error: {e}"
