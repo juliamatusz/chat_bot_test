@@ -11,7 +11,7 @@ st.markdown("### 🗳️ Znajdź kandydata, który myśli jak Ty")
 st.markdown("Porozmawiajmy o Twoich wartościach, a AI dopasuje odpowiednich kandydatów.")
 
 with st.sidebar:
-    st.markdown("### 📄 Załaduj programy kandydatów")
+st.title("Dodaj PDFy")
     if uploaded_files:
         with tempfile.TemporaryDirectory() as tmpdir:
             for uploaded_file in uploaded_files:
