@@ -79,7 +79,7 @@ if user_input := st.chat_input("Jakie poglądy są dla Ciebie kluczowe? Napisz n
                 )
                 response = extract_pure_text(response_to_clear)
             else:
-                response = "Dodaj pliki PDF, aby zapewnić kontekst."
+                response = "📄 Najpierw załaduj programy kandydatów w formacie PDF, aby móc dopasować odpowiedzi."
             message_placeholder.markdown(response)
         except Exception as e:
             response = f"Error: {e}"
