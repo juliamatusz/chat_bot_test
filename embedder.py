@@ -2,6 +2,7 @@ import faiss
 import numpy as np
 from langchain_huggingface import HuggingFaceEmbeddings
 
+
 class FAISSIndex:
     def __init__(self, faiss_index, metadata):
         self.index = faiss_index
