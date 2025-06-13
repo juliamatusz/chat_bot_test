@@ -63,7 +63,7 @@ def extract_pure_text(response):
     else:
         return str(response)
 
-if user_input := st.chat_input("Co jest dla Ciebie ważne?"):
+if user_input := st.chat_input("Jakie poglądy są dla Ciebie kluczowe? Napisz np. „Popieram atom i swobodny dostęp do broni”"):
     st.session_state.messages.append({"role": "user", "content": user_input})
     with st.chat_message("user"):
         st.markdown(user_input)
