@@ -7,7 +7,7 @@ from embedder import create_index, retrieve_docs
 from chat_openrouter import ChatOpenRouter
 from langchain.prompts import ChatPromptTemplate
 
-st.title("Pomocnik wyborczy")
+st.title("🧭 Dopasuj kandydata do swoich poglądów")
 
 
 with st.sidebar:
