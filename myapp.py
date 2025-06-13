@@ -70,3 +70,4 @@ if user_input := st.chat_input("What is up?"):
             st.error(response)
 
     st.session_state.messages.append({"role": "assistant", "content": response})
+    print("Raw response:", response)
