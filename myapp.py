@@ -35,10 +35,15 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 template = """
-Write short answers, up to 4 sentences. When you don't know just write: I don't know.
-Question: {question}
-Context: {context}
-Answer:
+Odpowiadaj tylko na podstawie poniższego kontekstu.
+Jeśli kontekst nie zawiera informacji – napisz: Nie wiem.
+Odpowiedź powinna być rzeczowa, neutralna, zwięzła (max 3 zdania), bez ocen.
+
+Pytanie: {question}
+Kontekst:
+{context}
+
+Odpowiedź:
 """
 
 def answer_with_context(question, index, model):
