@@ -7,12 +7,12 @@ from embedder import create_index, retrieve_docs
 from chat_openrouter import ChatOpenRouter
 from langchain.prompts import ChatPromptTemplate
 
-st.title("Test Chat with PDF Context")
+st.title("Pomocnik wyborczy")
 
 
 with st.sidebar:
-    st.title("Upload PDFs")
-    uploaded_files = st.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
+    st.title("Dodaj PDFy")
+    uploaded_files = st.file_uploader("Dodaj pliki PDF", type=["pdf"], accept_multiple_files=True)
 
     if uploaded_files:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -27,7 +27,7 @@ with st.sidebar:
 
 # Initialize chat history
 if "messages" not in st.session_state:
-    st.session_state.messages = [{"role": "assistant", "content": "Let's start chatting! 👇"}]
+    st.session_state.messages = [{"role": "assistant", "content": "Porozmawiajmy o poglądach kandydatów!"}]
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
@@ -61,7 +61,7 @@ def extract_pure_text(response):
     else:
         return str(response)
 
-if user_input := st.chat_input("What is up?"):
+if user_input := st.chat_input("Co jest dla Ciebie ważne?"):
     st.session_state.messages.append({"role": "user", "content": user_input})
     with st.chat_message("user"):
         st.markdown(user_input)
@@ -77,7 +77,7 @@ if user_input := st.chat_input("What is up?"):
                 )
                 response = extract_pure_text(response_to_clear)
             else:
-                response = "Please upload PDF files to provide context."
+                response = "Dodaj pliki PDF, aby zapewnić kontekst."
             message_placeholder.markdown(response)
         except Exception as e:
             response = f"Error: {e}"
