@@ -8,5 +8,4 @@ langchain-openai
 faiss-cpu
 sentence-transformers
 PyPDF2
-unicodedata
 nltk==3.8.1
