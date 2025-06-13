@@ -12,7 +12,6 @@ st.markdown("Porozmawiajmy o Twoich wartościach, a AI dopasuje odpowiednich kan
 
 with st.sidebar:
     st.markdown("### 📄 Załaduj programy kandydatów")
-    st.caption("Każdy plik powinien zawierać program 1 kandydata. Nazwij plik jego imieniem i nazwiskiem, np. `Mentzen_program.pdf`")    uploaded_files = st.file_uploader("Dodaj pliki PDF", type=["pdf"], accept_multiple_files=True)
     if uploaded_files:
         with tempfile.TemporaryDirectory() as tmpdir:
             for uploaded_file in uploaded_files:
