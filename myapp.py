@@ -7,8 +7,8 @@ from embedder import create_index, retrieve_docs
 from chat_openrouter import ChatOpenRouter
 from langchain.prompts import ChatPromptTemplate
 
-st.title("🧭 Dopasuj kandydata do swoich poglądów")
-
+st.markdown("### 🗳️ Znajdź kandydata, który myśli jak Ty")
+st.markdown("Porozmawiajmy o Twoich wartościach, a AI dopasuje odpowiednich kandydatów.")
 
 with st.sidebar:
     st.title("Dodaj PDFy")
