@@ -35,15 +35,17 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 template = """
-Odpowiadaj tylko na podstawie poniższego kontekstu.
-Jeśli kontekst nie zawiera informacji – napisz: Nie wiem.
-Odpowiedź powinna być rzeczowa, neutralna, zwięzła (max 3 zdania), bez ocen.
+Na podstawie poniższego kontekstu i pytania użytkownika wskaż jednego lub kilku kandydatów na prezydenta, których poglądy są najbardziej zgodne z preferencjami użytkownika. 
 
-Pytanie: {question}
+Podaj tylko imiona i nazwiska kandydatów oraz krótko wyjaśnij, dlaczego zostali zaproponowani. Nie twórz własnych opinii – bazuj wyłącznie na kontekście. Jeśli brak danych – napisz: „Nie wiem”.
+
+Pytanie użytkownika:
+{question}
+
 Kontekst:
 {context}
 
-Odpowiedź:
+Rekomendowani kandydaci:
 """
 
 def answer_with_context(question, index, model):
