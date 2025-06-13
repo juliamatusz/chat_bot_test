@@ -34,9 +34,13 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 template = """
-Na podstawie poniższego kontekstu i pytania użytkownika wskaż jednego lub kilku kandydatów na prezydenta, których poglądy są najbardziej zgodne z preferencjami użytkownika. 
+Na podstawie poniższego kontekstu odpowiedz na pytanie użytkownika, wskazując jednego lub więcej kandydatów, których programy są najbardziej zgodne z jego poglądami.
 
-Podaj tylko imiona i nazwiska kandydatów oraz krótko wyjaśnij, dlaczego zostali zaproponowani. Nie twórz własnych opinii – bazuj wyłącznie na kontekście. Jeśli brak danych – napisz: „Nie wiem”.
+- Nie twórz własnych cytatów.
+- Nie dodawaj słów w innych językach.
+- Pisz tylko po polsku.
+- Odpowiedzi mają być rzeczowe, maksymalnie 3–4 zdania.
+- Jeśli kontekst nie zawiera wystarczających danych – napisz: „Nie wiem”.
 
 Pytanie użytkownika:
 {question}
@@ -44,7 +48,7 @@ Pytanie użytkownika:
 Kontekst:
 {context}
 
-Rekomendowani kandydaci:
+Odpowiedź:
 """
 
 def answer_with_context(question, index, model):
