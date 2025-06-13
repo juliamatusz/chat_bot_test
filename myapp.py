@@ -48,6 +48,14 @@ def answer_with_context(question, index, model):
     chain = prompt | model
     return chain.invoke({"question": question, "context": context})
 
+def extract_pure_text(response):
+    if isinstance(response, dict):
+        return response.get("content", str(response))
+    elif hasattr(response, "content"):
+        return response.content
+    else:
+        return str(response)
+
 if user_input := st.chat_input("What is up?"):
     st.session_state.messages.append({"role": "user", "content": user_input})
     with st.chat_message("user"):
@@ -57,11 +65,12 @@ if user_input := st.chat_input("What is up?"):
         message_placeholder = st.empty()
         try:
             if "index" in st.session_state:
-                response = answer_with_context(
+                response_to_clear = answer_with_context(
                     user_input,
                     st.session_state.index,
                     ChatOpenRouter(model=st.secrets["MODEL"])
                 )
+                response = extract_pure_text(response_to_clear)
             else:
                 response = "Please upload PDF files to provide context."
             message_placeholder.markdown(response)
@@ -70,4 +79,3 @@ if user_input := st.chat_input("What is up?"):
             st.error(response)
 
     st.session_state.messages.append({"role": "assistant", "content": response})
-    print("Raw response:", response)
